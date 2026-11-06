@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IBGEF - Municípios</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --purple: #9b6cff;
+      --purple-dark: #7543d6;
+      --purple-light: #c4a7ff;
+      --background: #0b0912;
+      --surface: #14101e;
+      --surface-raised: #1b1528;
+      --surface-hover: #241b35;
+      --border: #302443;
+      --text: #f1edf8;
+      --muted: #a69bb8;
+      --success: #a78bfa;
+      --danger: #fb7185;
+      --warning: #fbbf24;
+      --shadow: 0 12px 35px rgba(0, 0, 0, .28);
+      --shadow-purple: 0 8px 26px rgba(139, 92, 246, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: background-color .2s ease, border-color .2s ease,
+        box-shadow .2s ease, color .2s ease, transform .2s ease;
+    }
+
+    html { min-height: 100%; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: 'Roboto', system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse at 50% -15%, rgba(124, 58, 237, .19), transparent 48%),
+        radial-gradient(circle at 100% 55%, rgba(91, 33, 182, .08), transparent 30%),
+        var(--background);
+    }
+
+    ::selection { color: #fff; background: #7543d6; }
+
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { background: #100d17; }
+    ::-webkit-scrollbar-thumb { background: #493563; border: 2px solid #100d17; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+    /* Cabeçalho */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 3.7rem 1rem 5rem;
+      color: #fff;
+      text-align: center;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(196, 167, 255, .17), transparent 32%),
+        radial-gradient(circle at 85% 80%, rgba(139, 92, 246, .2), transparent 35%),
+        linear-gradient(135deg, #160f23 0%, #291744 52%, #482080 100%);
+      border-bottom: 1px solid rgba(196, 167, 255, .2);
+    }
+
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      content: '';
+      pointer-events: none;
+      border: 1px solid rgba(221, 204, 255, .09);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .025);
+    }
+
+    .hero::before { top: -175px; left: -85px; width: 390px; height: 390px; }
+    .hero::after { right: -100px; bottom: -190px; width: 390px; height: 390px; }
+
+    .hero h1 {
+      position: relative;
+      margin-bottom: .65rem;
+      font-size: clamp(1.65rem, 4vw, 2.35rem);
+      font-weight: 700;
+      letter-spacing: -.035em;
+      text-shadow: 0 3px 22px rgba(0, 0, 0, .25);
+    }
+
+    .hero p { position: relative; margin: 0; color: #d8c9f2; font-size: 1.05rem; }
+
+    /* Cartões de estatísticas */
+    .stats { position: relative; z-index: 2; margin-top: -2.8rem; }
+
+    .stat {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.2rem;
+      background: linear-gradient(145deg, #1b1528, #15111f);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat:hover { transform: translateY(-4px); border-color: #59417c; box-shadow: var(--shadow-purple); }
+
+    .stat i {
+      display: flex;
+      width: 2.85rem;
+      height: 2.85rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple-light) !important;
+      font-size: 1.25rem;
+      background: rgba(139, 92, 246, .15);
+      border: 1px solid rgba(167, 139, 250, .18);
+      border-radius: 11px;
+    }
+
+    .stat span { display: block; color: var(--muted); font-size: .83rem; line-height: 1.5; }
+    .stat span + span { margin-top: .1rem; color: var(--text); font-size: 1.08rem; font-weight: 700; overflow-wrap: anywhere; }
+
+    /* Painéis */
+    .painel {
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(155deg, rgba(27, 21, 40, .98), rgba(18, 14, 27, .98));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .painel-titulo {
+      margin: 0;
+      padding: 1rem 1.25rem;
+      color: #e8ddff;
+      font-size: 1.13rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, rgba(139, 92, 246, .15), rgba(139, 92, 246, .035));
+      border-bottom: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+    }
+
+    .painel-corpo { padding: 1.3rem; }
+
+    /* Formulários */
+    .form-label { color: #c8bdd9; font-weight: 500; }
+    .form-check-label { color: #d8d0e5; }
+
+    .form-control,
+    .form-control-sm {
+      min-height: 36px;
+      color: var(--text);
+      background-color: #100d18;
+      border: 1px solid #3a2d4e;
+      border-radius: 8px;
+    }
+
+    .form-control::placeholder,
+    .form-control-sm::placeholder { color: #786d89; opacity: 1; }
+
+    .form-control:hover,
+    .form-control-sm:hover { border-color: #604786; }
+
+    .form-control:focus,
+    .form-control-sm:focus {
+      color: #fff;
+      background-color: #151020;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .2);
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] { color: #9d91ad; background: #1a1524; }
+
+    .form-check-input {
+      background-color: #100d18;
+      border-color: #59466f;
+    }
+
+    .form-check-input:checked { background-color: var(--purple-dark); border-color: var(--purple); }
+    .form-check-input:focus { border-color: var(--purple); box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .2); }
+
+    /* Botões */
+    .btn {
+      border-radius: 8px;
+      font-weight: 600;
+      letter-spacing: .005em;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0, 0, 0, .25); }
+    .btn:active { transform: translateY(0); box-shadow: none; }
+    .btn:focus-visible { outline: 2px solid var(--purple-light); outline-offset: 3px; box-shadow: none; }
+
+    .btn-success,
+    .btn-success:focus {
+      color: #fff;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border-color: #8b5cf6;
+    }
+
+    .btn-success:hover,
+    .btn-success:active {
+      color: #fff;
+      background: linear-gradient(135deg, #a078ff, #7c3aed);
+      border-color: #a078ff;
+    }
+
+    .btn-primary,
+    .btn-primary:focus {
+      color: #fff;
+      background: #673ab7;
+      border-color: #8052d6;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:active { color: #fff; background: #7c4bd1; border-color: #a78bfa; }
+
+    .btn-outline-primary { color: #c4a7ff; border-color: #8052d6; }
+    .btn-outline-primary:hover,
+    .btn-outline-primary:active { color: #fff; background: #673ab7; border-color: #8052d6; }
+
+    .btn-warning { color: #21162f; background: #e9b949; border-color: #e9b949; }
+    .btn-warning:hover { color: #171020; background: #f5ca68; border-color: #f5ca68; }
+
+    .btn-danger { color: #fff; background: #be3455; border-color: #d34b6b; }
+    .btn-danger:hover { color: #fff; background: #dc4265; border-color: #f06b88; }
+
+    /* Tabela */
+    .table-responsive {
+      max-height: 520px;
+      overflow: auto;
+      background: #120e1a;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    .table {
+      margin-bottom: 0;
+      color: #e8e1f1;
+      --bs-table-color: #e8e1f1;
+      --bs-table-bg: transparent;
+      --bs-table-border-color: #30263e;
+      --bs-table-striped-bg: rgba(139, 92, 246, .045);
+      --bs-table-striped-color: #e8e1f1;
+      --bs-table-hover-bg: rgba(139, 92, 246, .12);
+      --bs-table-hover-color: #fff;
+    }
+
+    .table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: .85rem .75rem;
+      color: #d6c4f5;
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      white-space: nowrap;
+      background: #211831;
+      border-bottom: 1px solid #493361;
+    }
+
+    .table td { padding: .75rem; color: #ded6e9; border-color: #30263e; vertical-align: middle; }
+    .table tbody tr { background: #15101f; }
+    .table tbody tr:nth-child(even) { background: #191326; }
+    .table tbody tr:hover { background: #29203a; }
+    .table .btn-sm { padding: .3rem .55rem; }
+
+    /* Mensagens */
+    .alert {
+      color: #e9e1f3;
+      background: #211831;
+      border: 1px solid #493361;
+      border-left: 3px solid var(--purple);
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .alert-success { color: #d9c8ff; background: #211832; border-color: #6945a0; }
+    .alert-danger { color: #ffc2cf; background: #2a1420; border-color: #a83c5a; }
+    .alert-warning { color: #ffe2a3; background: #2a2114; border-color: #9b712b; }
+    .alert-info { color: #d8c8ff; background: #20172e; border-color: #6848a0; }
+
+    .text-muted { color: #9387a4 !important; }
+
+    /* Rodapé */
+    footer {
+      padding: 1.8rem 0 2.5rem;
+      color: #887d98;
+      font-size: .9rem;
+      text-align: center;
+    }
+
+    footer a { color: var(--purple-light); font-weight: 600; text-decoration: none; }
+    footer a:hover { color: #fff; text-decoration: underline; }
+
+    /* Responsividade */
+    @media (max-width: 575.98px) {
+      .hero { padding: 2.7rem 1rem 4.5rem; }
+      .hero h1 { font-size: 1.65rem; }
+      .hero p { font-size: .95rem; }
+      .painel-titulo { font-size: 1.05rem; }
+      .painel-corpo { padding: 1rem; }
+      .stat { padding: .9rem; gap: .7rem; }
+      .stat i { width: 2.5rem; height: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <header class="hero">
+    <h1>Atividade Prática 01: Municípios do Nordeste</h1>
+    <p>Gerenciamento de Municípios (Base em Memória)</p>
+  </header>
+ 
+  <div class="container stats">
+    <div class="row g-3">
+      <div class="col-6 col-lg-3">
+        <div class="stat"><i class="fa-solid fa-map-location-dot"></i>
+          <div><span>Região:</span><span id="meta-regiao">-</span></div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat"><i class="fa-solid fa-flag" style="color:#1c8f3c"></i>
+          <div><span>País:</span><span id="meta-pais">-</span></div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat"><i class="fa-solid fa-users"></i>
+          <div><span>Total:</span><span id="meta-total">-</span></div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat"><i class="fa-solid fa-circle-info"></i>
+          <div><span>Fonte:</span><span id="meta-fonte">-</span></div></div>
+      </div>
+    </div>
+  </div>
+ 
+  <main class="container my-4">
+    <div class="row g-4">
+ 
+      <!-- Formulário -->
+      <div class="col-lg-5">
+        <div class="painel">
+          <h2 class="painel-titulo">Cadastrar / Atualizar Município</h2>
+          <div class="painel-corpo">
+            <form id="form" autocomplete="off">
+              <div class="mb-2">
+                <label class="form-label small mb-1" for="nome">Nome do Município</label>
+                <input class="form-control form-control-sm" id="nome" required>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small mb-1" for="id_ibge">ID IBGE</label>
+                <input class="form-control form-control-sm" id="id_ibge" type="number" min="1" required>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-8">
+                  <label class="form-label small mb-1" for="estado">Estado</label>
+                  <input class="form-control form-control-sm" id="estado" required>
+                </div>
+                <div class="col-4">
+                  <label class="form-label small mb-1" for="sigla_uf">UF</label>
+                  <input class="form-control form-control-sm text-uppercase" id="sigla_uf"
+                         maxlength="2" pattern="[A-Za-z]{2}" required>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small mb-1" for="populacao">População Estimada</label>
+                <input class="form-control form-control-sm" id="populacao" type="number" min="0" required>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="capital">
+                <label class="form-check-label" for="capital">Capital?</label>
+              </div>
+              <button type="submit" class="btn btn-success btn-sm">Salvar / Atualizar</button>
+              <button type="button" id="btn-buscar" class="btn btn-primary btn-sm">Buscar por Nome</button>
+              <button type="button" id="btn-parcial" class="btn btn-warning btn-sm">Atualizar Parcial</button>
+            </form>
+            <div id="mensagem" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Lista -->
+      <div class="col-lg-7">
+        <div class="painel">
+          <h2 class="painel-titulo">Lista de Municípios</h2>
+          <div class="painel-corpo">
+            <div class="row g-3 mb-3">
+              <div class="col-sm-7">
+                <label class="form-label small mb-1" for="busca">Busca</label>
+                <input class="form-control form-control-sm" id="busca" placeholder="Busca">
+              </div>
+              <div class="col-sm-5">
+                <label class="form-label small mb-1" for="filtro-uf">Filtrar por UF</label>
+                <input class="form-control form-control-sm text-uppercase" id="filtro-uf"
+                       maxlength="2" placeholder="ex: CE">
+              </div>
+            </div>
+ 
+            <div class="d-flex justify-content-end gap-2 mb-3">
+              <a class="btn btn-outline-primary btn-sm" href="/download/municipios.json" download>
+                <i class="fa-solid fa-download"></i> Baixar JSON
+              </a>
+              <button type="button" id="btn-novo" class="btn btn-success btn-sm">Cadastrar Novo</button>
+            </div>
+ 
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Nome</th><th>UF</th><th>Capital</th>
+                    <th>População</th><th>ID IBGE</th><th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </main>
+ 
+  <footer>
+    Desenvolvido em <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask</a>
+    | Manipulação de Dicionários
+  </footer>
+ 
+  <script>
+    const API = "/municipios";
+    const $ = id => document.getElementById(id);
+    let municipios = {};
+ 
+    const esc = s => String(s).replace(/[&<>"']/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const norm = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+ 
+    function mostrarMsg(texto, tipo = "success") {
+      $("mensagem").innerHTML = `<div class="alert alert-${tipo} py-2 mb-0">${esc(texto)}</div>`;
+    }
+ 
+    async function req(url, opcoes = {}) {
+      const resp = await fetch(url, opcoes);
+      let dados = null;
+      try { dados = await resp.json(); } catch (e) { /* sem corpo JSON */ }
+      return { ok: resp.ok, status: resp.status, dados };
+    }
+ 
+    const jsonOpts = (metodo, corpo) => ({
+      method: metodo,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(corpo),
+    });
+ 
+    const urlNome = nome => `${API}/${encodeURIComponent(nome)}`;
+ 
+    async function carregarMetadados() {
+      const r = await req("/metadados");
+      if (!r.ok) return;
+      $("meta-regiao").textContent = r.dados.regiao;
+      $("meta-pais").textContent = r.dados.pais;
+      $("meta-total").textContent = r.dados.total_municipios;
+      $("meta-fonte").textContent = r.dados.fonte_dados_populacao;
+    }
+ 
+    async function carregarMunicipios() {
+      const uf = $("filtro-uf").value.trim();
+      const r = await req(uf ? `${API}?uf=${encodeURIComponent(uf)}` : API);
+      municipios = r.ok ? r.dados : {};
+      renderTabela();
+    }
+ 
+    const recarregar = () => Promise.all([carregarMunicipios(), carregarMetadados()]);
+ 
+    function renderTabela() {
+      const termo = norm($("busca").value.trim());
+      const linhas = Object.entries(municipios)
+        .filter(([nome]) => norm(nome).includes(termo))
+        .map(([nome, m]) => `
+          <tr>
+            <td>${esc(nome)}</td>
+            <td>${esc(m.sigla_uf)}</td>
+            <td>${m.capital ? "Sim" : "Não"}</td>
+            <td>${Number(m.populacao_estimada).toLocaleString("pt-BR")}</td>
+            <td>${esc(m.id_ibge)}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-primary btn-sm" data-acao="editar" data-nome="${esc(nome)}" title="Editar">
+                <i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger btn-sm" data-acao="excluir" data-nome="${esc(nome)}" title="Excluir">
+                <i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>`);
+      $("tabela").innerHTML = linhas.length
+        ? linhas.join("")
+        : `<tr><td colspan="6" class="text-center text-muted py-3">Nenhum município encontrado.</td></tr>`;
+    }
+ 
+    function limparForm() {
+      $("form").reset();
+      $("mensagem").innerHTML = "";
+    }
+ 
+    function preencherForm(nome, m) {
+      $("nome").value = nome;
+      $("id_ibge").value = m.id_ibge;
+      $("estado").value = m.estado;
+      $("sigla_uf").value = m.sigla_uf;
+      $("populacao").value = m.populacao_estimada;
+      $("capital").checked = !!m.capital;
+    }
+ 
+    // Salvar / Atualizar: PUT (substituição completa) se o município já existe, POST se for novo
+    $("form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const nome = $("nome").value.trim();
+      const dados = {
+        id_ibge: parseInt($("id_ibge").value, 10),
+        estado: $("estado").value.trim(),
+        sigla_uf: $("sigla_uf").value.trim().toUpperCase(),
+        capital: $("capital").checked,
+        populacao_estimada: parseInt($("populacao").value, 10),
+      };
+      const existe = (await req(urlNome(nome))).ok;
+      const r = existe
+        ? await req(urlNome(nome), jsonOpts("PUT", dados))
+        : await req(API, jsonOpts("POST", { nome, ...dados }));
+      if (r.ok) {
+        mostrarMsg(existe ? `Município "${nome}" atualizado.` : `Município "${nome}" cadastrado.`);
+        await recarregar();
+      } else {
+        mostrarMsg((r.dados && r.dados.erro) || "Erro ao salvar.", "danger");
+      }
+    });
+ 
+    $("btn-buscar").addEventListener("click", async () => {
+      const nome = $("nome").value.trim();
+      if (!nome) return mostrarMsg("Digite o nome do município para buscar.", "warning");
+      const r = await req(urlNome(nome));
+      if (!r.ok) return mostrarMsg((r.dados && r.dados.erro) || "Município não encontrado.", "danger");
+      preencherForm(nome, r.dados[nome]);
+      mostrarMsg(`Município "${nome}" encontrado.`, "info");
+    });
+ 
+    // Atualizar Parcial: PATCH enviando apenas os campos preenchidos
+    $("btn-parcial").addEventListener("click", async () => {
+      const nome = $("nome").value.trim();
+      if (!nome) return mostrarMsg("Digite o nome do município a atualizar.", "warning");
+      const dados = {};
+      if ($("id_ibge").value !== "") dados.id_ibge = parseInt($("id_ibge").value, 10);
+      if ($("estado").value.trim()) dados.estado = $("estado").value.trim();
+      if ($("sigla_uf").value.trim()) dados.sigla_uf = $("sigla_uf").value.trim().toUpperCase();
+      if ($("populacao").value !== "") dados.populacao_estimada = parseInt($("populacao").value, 10);
+      if ($("capital").checked) dados.capital = true;
+      if (!Object.keys(dados).length) return mostrarMsg("Preencha ao menos um campo para atualizar.", "warning");
+      const r = await req(urlNome(nome), jsonOpts("PATCH", dados));
+      if (r.ok) { mostrarMsg(`Município "${nome}" atualizado parcialmente.`); await recarregar(); }
+      else mostrarMsg((r.dados && r.dados.erro) || "Erro ao atualizar.", "danger");
+    });
+ 
+    $("btn-novo").addEventListener("click", () => { limparForm(); $("nome").focus(); });
+ 
+    $("tabela").addEventListener("click", async e => {
+      const botao = e.target.closest("button[data-acao]");
+      if (!botao) return;
+      const nome = botao.dataset.nome;
+      if (botao.dataset.acao === "editar") {
+        preencherForm(nome, municipios[nome]);
+        $("mensagem").innerHTML = "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (confirm(`Excluir o município "${nome}"?`)) {
+        const r = await req(urlNome(nome), { method: "DELETE" });
+        if (r.ok) { mostrarMsg(`Município "${nome}" removido.`); await recarregar(); }
+        else mostrarMsg((r.dados && r.dados.erro) || "Erro ao excluir.", "danger");
+      }
+    });
+ 
+    $("busca").addEventListener("input", renderTabela);
+    $("filtro-uf").addEventListener("input", carregarMunicipios);
+ 
+    recarregar();
+  </script>
+</body>
+</html>
+ 
